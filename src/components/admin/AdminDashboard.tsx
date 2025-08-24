@@ -97,7 +97,7 @@ const AdminDashboard: React.FC = () => {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Tableau de Bord</h1>
                 <p className="text-gray-600">
-                  Bienvenue {adminData?.username} - {adminData?.role}
+                  Bienvenue {adminData?.full_name || adminData?.email} - {adminData?.role}
                 </p>
               </div>
               <div className="mt-4 sm:mt-0">

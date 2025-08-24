@@ -12,11 +12,14 @@ export interface Database {
       users: {
         Row: {
           id: string
-          auth_user_id: string | null
           full_name: string | null
           email: string
+          password: string
           phone_number: string | null
           avatar_url: string | null
+          address: string | null
+          city: string | null
+          country: string | null
           role: 'client' | 'admin' | 'staff'
           is_verified: boolean
           two_fa_enabled: boolean
@@ -26,11 +29,14 @@ export interface Database {
         }
         Insert: {
           id?: string
-          auth_user_id?: string | null
           full_name?: string | null
           email: string
+          password: string
           phone_number?: string | null
           avatar_url?: string | null
+          address?: string | null
+          city?: string | null
+          country?: string | null
           role?: 'client' | 'admin' | 'staff'
           is_verified?: boolean
           two_fa_enabled?: boolean
@@ -40,11 +46,14 @@ export interface Database {
         }
         Update: {
           id?: string
-          auth_user_id?: string | null
           full_name?: string | null
           email?: string
+          password?: string
           phone_number?: string | null
           avatar_url?: string | null
+          address?: string | null
+          city?: string | null
+          country?: string | null
           role?: 'client' | 'admin' | 'staff'
           is_verified?: boolean
           two_fa_enabled?: boolean

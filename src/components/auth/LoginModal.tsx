@@ -37,62 +37,29 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
     try {
       if (isLogin) {
-        // Allow login by email or phone number (resolves to account email)
-        let identifier = formData.email.trim();
-        let emailToUse = identifier;
-
-        // If identifier doesn't look like an email, try to resolve by phone or username-like match
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(identifier)) {
-          try {
-            const { data: foundUser } = await supabase
-              ?.from('users')
-              .select('email')
-              .or(`email.ilike.${identifier},phone_number.ilike.${identifier}`)
-              .maybeSingle() || { data: null };
-
-            if (foundUser?.email) {
-              emailToUse = foundUser.email;
-            }
-          } catch {}
-        }
-
-        const result = await signIn(emailToUse, formData.password);
+        // Direct login with email/phone and password
+        const result = await signIn(formData.email.trim(), formData.password);
         if (result.success) {
           toast.success(language === 'en' ? 'Welcome back!' : 'Bon retour !');
           onClose();
         } else {
-          const msg = (result.error || '').toLowerCase();
-          const friendly =
-            msg.includes('invalid')
-              ? (language === 'en'
-                  ? 'Incorrect email or password. If you just created an account, please confirm your email first.'
-                  : "Email ou mot de passe incorrect. Si vous venez de créer un compte, veuillez d'abord confirmer votre email.")
-              : msg.includes('email not confirmed')
-              ? (language === 'en' ? 'Please confirm your email to log in.' : 'Veuillez confirmer votre email pour vous connecter.')
-              : (language === 'en' ? 'Login failed' : 'Échec de la connexion');
-          toast.error(friendly);
+          toast.error(result.error || (language === 'en' ? 'Login failed' : 'Échec de la connexion'));
         }
       } else {
         if (formData.password !== formData.confirmPassword) {
           toast.error(language === 'en' ? 'Passwords do not match' : 'Les mots de passe ne correspondent pas');
           return;
         }
+        
         const result = await signUp(
           formData.email, 
           formData.password,
           { full_name: formData.fullName, phone_number: formData.phone }
         );
+        
         if (result.success) {
-          const needsEmailConfirm = !result.data?.session;
-          toast.success(
-            needsEmailConfirm
-              ? (language === 'en'
-                  ? 'Account created! Please check your email to confirm your account.'
-                  : 'Compte créé ! Veuillez vérifier votre email pour confirmer votre compte.')
-              : (language === 'en' ? 'Account created successfully!' : 'Compte créé avec succès !')
-          );
-          if (!needsEmailConfirm) onClose();
-          setIsLogin(true);
+          toast.success(language === 'en' ? 'Account created successfully!' : 'Compte créé avec succès !');
+          onClose();
         } else {
           toast.error(result.error || (language === 'en' ? 'Registration failed' : 'Échec de l\'inscription'));
         }

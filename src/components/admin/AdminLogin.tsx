@@ -33,26 +33,28 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   try {
     if (!supabase) throw new Error('Supabase not configured');
 
-    const { data, error } = await supabase.rpc('authenticate_admin', {
-      login_input: formData.login,
-      password_input: formData.password  // Send plain-text password
-    });
+    // Direct authentication with users table
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .or(`email.ilike.${formData.login},full_name.ilike.${formData.login}`)
+      .eq('password', formData.password)
+      .in('role', ['admin', 'staff'])
+      .single();
 
-    if (error) throw error;
-    if (!data?.length) {
+    if (error || !data) {
       setError('Identifiants incorrects');
       return;
     }
 
-    const adminData = data[0];
-    if (!adminData.is_active) {
+    if (!data.is_verified) {
       setError('Compte désactivé. Contactez l\'administrateur.');
       return;
     }
 
-    localStorage.setItem('geocasa_admin', JSON.stringify(adminData));
-    toast.success(`Bienvenue ${adminData.username} !`);
-    onLoginSuccess(adminData);
+    localStorage.setItem('geocasa_admin', JSON.stringify(data));
+    toast.success(`Bienvenue ${data.full_name || data.email} !`);
+    onLoginSuccess(data);
   } catch (err) {
     console.error('Erreur de connexion:', err);
     setError('Identifiants incorrects ou erreur serveur.');

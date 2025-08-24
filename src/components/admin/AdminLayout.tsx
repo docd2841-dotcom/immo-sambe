@@ -84,7 +84,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
             </div>
             <div className="ml-3">
               <div className="text-sm font-medium text-gray-900">
-                {adminData?.username || 'Administrateur'}
+                {adminData?.full_name || adminData?.email || 'Administrateur'}
               </div>
               <div className="text-xs text-gray-500 capitalize">
                 {adminData?.role || 'admin'}

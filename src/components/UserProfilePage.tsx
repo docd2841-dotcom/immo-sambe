@@ -50,7 +50,10 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClose }) => {
     full_name: userProfile?.full_name || '',
     email: userProfile?.email || '',
     phone_number: userProfile?.phone_number || '',
-    avatar_url: userProfile?.avatar_url || ''
+    avatar_url: userProfile?.avatar_url || '',
+    address: userProfile?.address || '',
+    city: userProfile?.city || '',
+    country: userProfile?.country || 'Cameroun'
   });
 
   const [passwordForm, setPasswordForm] = useState({
@@ -99,7 +102,10 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClose }) => {
         full_name: userProfile.full_name || '',
         email: userProfile.email || '',
         phone_number: userProfile.phone_number || '',
-        avatar_url: userProfile.avatar_url || ''
+        avatar_url: userProfile.avatar_url || '',
+        address: userProfile.address || '',
+        city: userProfile.city || '',
+        country: userProfile.country || 'Cameroun'
       });
     }
   }, [userProfile]);
@@ -184,7 +190,19 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClose }) => {
     }
 
     try {
-      // Here you would call your password change API
+      // Verify current password first
+      if (!userProfile || userProfile.password !== passwordForm.currentPassword) {
+        toast.error(language === 'en' ? 'Current password is incorrect' : 'Le mot de passe actuel est incorrect');
+        return;
+      }
+
+      // Update password in database
+      const result = await updateProfile({ password: passwordForm.newPassword });
+      if (!result.success) {
+        toast.error(result.error || (language === 'en' ? 'Failed to change password' : 'Échec du changement de mot de passe'));
+        return;
+      }
+
       toast.success(language === 'en' ? 'Password changed successfully!' : 'Mot de passe changé avec succès !');
       setShowPasswordChange(false);
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -198,7 +216,10 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ onClose }) => {
       full_name: userProfile.full_name || '',
       email: userProfile.email || '',
       phone_number: userProfile.phone_number || '',
-      avatar_url: userProfile.avatar_url || ''
+      avatar_url: userProfile.avatar_url || '',
+      address: userProfile.address || '',
+      city: userProfile.city || '',
+      country: userProfile.country || 'Cameroun'
     });
     setIsEditing(false);
     setProfileImageFile(null);
