@@ -43,9 +43,13 @@ export const useAuth = () => {
       // Create new user
       const newUser = {
         email,
-        password, // Store plain text password as requested
+        password,
         full_name: userData?.full_name || null,
         phone_number: userData?.phone_number || null,
+        address: null,
+        city: null,
+        country: 'Cameroun',
+        avatar_url: null,
         role: 'client' as const,
         is_verified: true, // Auto-verify since no email confirmation
         two_fa_enabled: false,
@@ -59,6 +63,7 @@ export const useAuth = () => {
         .single();
 
       if (error) {
+        console.error('Signup error:', error);
         return { success: false, error: error.message };
       }
 
@@ -69,6 +74,7 @@ export const useAuth = () => {
 
       return { success: true, data };
     } catch (error) {
+      console.error('Signup error:', error);
       return { 
         success: false, 
         error: error instanceof Error ? error.message : 'Erreur lors de l\'inscription' 
@@ -87,10 +93,11 @@ export const useAuth = () => {
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .or(`email.ilike.${email},phone_number.ilike.${email}`)
+        .or(`email.eq.${email},phone_number.eq.${email}`)
         .single();
 
       if (error || !data) {
+        console.error('Login error:', error);
         return { success: false, error: 'Email ou mot de passe incorrect' };
       }
 
@@ -106,6 +113,7 @@ export const useAuth = () => {
 
       return { success: true, data };
     } catch (error) {
+      console.error('Login error:', error);
       return { 
         success: false, 
         error: error instanceof Error ? error.message : 'Erreur lors de la connexion' 

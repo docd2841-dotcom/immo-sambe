@@ -17,12 +17,23 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: 'user@geocasa.com',
+    password: 'user123',
     fullName: '',
     phone: '',
     confirmPassword: ''
   });
+
+  // Demo credentials helper
+  const fillDemoCredentials = () => {
+    setFormData({
+      email: 'user@geocasa.com',
+      password: 'user123',
+      fullName: 'Demo User',
+      phone: '+237670123456',
+      confirmPassword: 'user123'
+    });
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -117,6 +128,31 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Demo Credentials Helper */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-sm font-semibold text-blue-800 mb-1">
+                  {language === 'en' ? 'Demo Credentials' : 'Identifiants de Démonstration'}
+                </h4>
+                <p className="text-xs text-blue-600">
+                  {language === 'en' ? 'Click to fill demo credentials' : 'Cliquez pour remplir les identifiants de démo'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={fillDemoCredentials}
+                className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors"
+              >
+                {language === 'en' ? 'Fill Demo' : 'Remplir Démo'}
+              </button>
+            </div>
+            <div className="mt-2 text-xs text-blue-600">
+              <div><strong>Email:</strong> user@geocasa.com</div>
+              <div><strong>{language === 'en' ? 'Password' : 'Mot de passe'}:</strong> user123</div>
+            </div>
+          </div>
+
           {!isLogin && (
             <>
               <div>
@@ -246,6 +282,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
         {/* Footer */}
         <div className="px-6 pb-6 text-center">
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
+            <div className="font-semibold mb-1">
+              {language === 'en' ? 'Test Account Available:' : 'Compte de Test Disponible:'}
+            </div>
+            <div>Email: user@geocasa.com</div>
+            <div>{language === 'en' ? 'Password' : 'Mot de passe'}: user123</div>
+          </div>
           <p className="text-gray-600">
             {isLogin 
               ? (language === 'en' ? "Don't have an account?" : "Vous n'avez pas de compte ?")

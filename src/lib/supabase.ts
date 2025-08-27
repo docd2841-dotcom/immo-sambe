@@ -26,6 +26,10 @@ export const createUser = async (userData: {
       password: userData.password,
       full_name: userData.full_name || null,
       phone_number: userData.phone_number || null,
+      address: null,
+      city: null,
+      country: 'Cameroun',
+      avatar_url: null,
       role: 'client',
       is_verified: true,
       two_fa_enabled: false,
@@ -44,7 +48,7 @@ export const authenticateUser = async (email: string, password: string) => {
   const { data, error } = await supabase
     .from('users')
     .select('*')
-    .or(`email.ilike.${email},phone_number.ilike.${email}`)
+    .or(`email.eq.${email},phone_number.eq.${email}`)
     .eq('password', password)
     .single();
 
