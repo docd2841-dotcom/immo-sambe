@@ -4,9 +4,15 @@ import { Database } from './database.types';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+// Check if Supabase is properly configured
+const isSupabaseConfigured = supabaseUrl && 
+  supabaseAnonKey && 
+  supabaseUrl !== 'https://your-project-id.supabase.co' &&
+  supabaseAnonKey !== 'your-anon-public-key';
+
 export const supabase = createClient<Database>(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
+  supabaseUrl || 'https://your-project-id.supabase.co',
+  supabaseAnonKey || 'your-anon-public-key'
 );
 
 // Helper functions for direct database operations
@@ -16,6 +22,10 @@ export const createUser = async (userData: {
   full_name?: string;
   phone_number?: string;
 }) => {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.');
+  }
+
   const { data, error } = await supabase
     .from('users')
     .insert({
@@ -40,6 +50,10 @@ export const createUser = async (userData: {
 };
 
 export const authenticateUser = async (email: string, password: string) => {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.');
+  }
+
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -52,6 +66,10 @@ export const authenticateUser = async (email: string, password: string) => {
 };
 
 export const getUserById = async (userId: string) => {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.');
+  }
+
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -63,6 +81,10 @@ export const getUserById = async (userId: string) => {
 };
 
 export const updateUser = async (userId: string, updates: any) => {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.');
+  }
+
   const { data, error } = await supabase
     .from('users')
     .update(updates)
