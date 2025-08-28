@@ -4,11 +4,10 @@ import { Database } from './database.types';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables not found. Using demo mode.');
-}
-
-export const supabase = supabaseUrl && supabaseAnonKey ? createClient<Database>(supabaseUrl, supabaseAnonKey) : null;
+export const supabase = createClient<Database>(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-key'
+);
 
 // Helper functions for direct database operations
 export const createUser = async (userData: {
@@ -17,8 +16,6 @@ export const createUser = async (userData: {
   full_name?: string;
   phone_number?: string;
 }) => {
-  if (!supabase) throw new Error('Supabase not configured');
-
   const { data, error } = await supabase
     .from('users')
     .insert({
@@ -43,8 +40,6 @@ export const createUser = async (userData: {
 };
 
 export const authenticateUser = async (email: string, password: string) => {
-  if (!supabase) throw new Error('Supabase not configured');
-
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -57,8 +52,6 @@ export const authenticateUser = async (email: string, password: string) => {
 };
 
 export const getUserById = async (userId: string) => {
-  if (!supabase) throw new Error('Supabase not configured');
-
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -70,8 +63,6 @@ export const getUserById = async (userId: string) => {
 };
 
 export const updateUser = async (userId: string, updates: any) => {
-  if (!supabase) throw new Error('Supabase not configured');
-
   const { data, error } = await supabase
     .from('users')
     .update(updates)
